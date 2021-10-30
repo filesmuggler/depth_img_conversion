@@ -1,26 +1,22 @@
 #!/usr/bin/env python3
-"""
-Saves Depth image topic into series of PNG images
-"""
 __author__ = 'Krzysztof Stezala <krzysztof.stezala at put.poznan.pl>'
 __version__ = '0.1'
 __license__ = 'MIT'
 
-import sys,time
+import sys
 import rospy
-import roslib
 import numpy as np
-from cv_bridge import CvBridge, CvBridgeError
+from cv_bridge import CvBridge
 import cv2
-import message_filters
-from sensor_msgs.msg import Image, CameraInfo
+from sensor_msgs.msg import Image
 from std_msgs.msg import Header
 import os
 import os.path
-from os import path
-from PIL import Image as PImage
 
 class IpImg2Ros:
+    """
+    Publishes Depth image topic from series of PNG images
+    """
     def __init__(self):
         rospy.loginfo("IpImg2Ros -> is RUN")
         self.depth = np.zeros([480,640])
@@ -33,12 +29,16 @@ class IpImg2Ros:
 
 
     def pub_img(self):
+        
         frames_file = open(self.read_path_info+"frames.txt", 'r')
         filenames = frames_file.readlines()
         for f in filenames:
+            ### IMAGE
+            ## strip() removes newline character
             img_gray = cv2.imread(os.path.join(self.read_path_img,f.strip()),cv2.IMREAD_UNCHANGED )
-
             self.imgs.append(img_gray)
+
+            ### TIMESTAMP
             time_s_ns = f.split(".")[0]
             t = rospy.Time()
             t.secs = int(time_s_ns.split("_")[0])
@@ -56,8 +56,6 @@ class IpImg2Ros:
             counter = counter + 1
             if counter >= len(self.imgs):
                 break
-            
-
 
     def make_path_to_read(self):
         bag_path = rospy.get_param("~path_to_read")
@@ -66,30 +64,6 @@ class IpImg2Ros:
         path_info = parts[0] + "/info/"
         return path_img, path_info
 
-    def callback_depth(self,data):
-        # filter image elementwise numpy
-        try:
-            # cv_image = self.cv_bridge.imgmsg_to_cv2(data, "32FC1")
-            # cv_image_array = nanp.array(cv_image, dtype = np.dtype('f4'))
-            # #cv_image_array = cv_image_array * 255.0
-            # # Normalize the depth image to fall between 0 (black) and 1 (white)            
-            # cv_image_norm = cv2.normalize(cv_image_array, cv_image_array, 0, 1, cv2.NORM_MINMAX)
-            # self.depth = cv_image_norm
-
-
-            cv_image = self.cv_bridge.imgmsg_to_cv2(data, "16UC1")
-            self.depth = cv_image
-            self.depth_timestamp = data.header.stamp
-
-            filename = self.save_path + str(self.depth_timestamp) + ".png"
-
-            cv2.imwrite(filename,self.depth)
-            # print(self.depth_timestamp)
-            # cv2.namedWindow('image')
-            # cv2.imshow("image", self.depth)
-            # cv2.waitKey(3)
-        except CvBridgeError as e:
-            print("cv bridge: ",e)
 
 def main(args):
     rospy.init_node('ip_rosbag_2_img',anonymous=True)
@@ -98,7 +72,6 @@ def main(args):
         ip_i2r.pub_img()
     except KeyboardInterrupt:
         print("Shutting down ROS IpImg2Ros")
-    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main(sys.argv)
