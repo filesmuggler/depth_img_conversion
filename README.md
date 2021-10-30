@@ -27,5 +27,6 @@ Gif presenting reconstruction of the depth image from PNG file (bottom) to ROS t
 
 It's not finished yet :)))
 Lots of work to be done 
-<iframe src="https://giphy.com/embed/E6jscXfv3AkWQ" width="600" height="250" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/cat-typing-E6jscXfv3AkWQ">via GIPHY</a></p>
-
+<br />
+<img src="https://media.giphy.com/media/E6jscXfv3AkWQ/giphy.gif" width="250" height="250"/> </img>
+<a href="https://giphy.com/gifs/cat-typing-E6jscXfv3AkWQ">via GIPHY</a></p>
