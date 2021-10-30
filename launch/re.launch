@@ -1,0 +1,10 @@
+<launch>
+<arg name="path_to_bag" default=""/>
+
+<node pkg="rosbag" type="play" name="player" args="--clock $(arg path_to_bag)"/>
+
+<node pkg="ip_rosbag_to_img" type="IpImg2Ros.py" name="img_repub" output="screen">
+    <param name="path_to_read" type="string" value="$(arg path_to_bag)"/>
+</node>
+
+</launch>
