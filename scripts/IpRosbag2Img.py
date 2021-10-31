@@ -69,7 +69,7 @@ class IpRosbag2Img:
         Saves camera info once
         """
         self.cam_info = data
-        file = open(self.save_path_info+"info.txt","w")
+        file = open(self.save_path_info+"info.yaml","w")
         file.write(str(self.cam_info))
         file.close()
 

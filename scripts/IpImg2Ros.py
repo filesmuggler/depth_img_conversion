@@ -8,10 +8,11 @@ import rospy
 import numpy as np
 from cv_bridge import CvBridge
 import cv2
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, CameraInfo
 from std_msgs.msg import Header
 import os
 import os.path
+import yaml
 
 class IpImg2Ros:
     """
@@ -22,7 +23,8 @@ class IpImg2Ros:
         self.depth = np.zeros([480,640])
         self.cv_bridge = CvBridge()
         self.rate = rospy.Rate(6)
-        self.depth_publisher = rospy.Publisher("/depth_camera_front/depth/ip_img_to_ros",Image, queue_size=10)
+        self.depth_publisher = rospy.Publisher("/ip_img_to_ros",Image, queue_size=10)
+        self.cam_info_publisher = rospy.Publisher("/ip_img_to_ros_cam_info",CameraInfo,queue_size=10)
         self.imgs = []
         self.timestamps = []
         self.read_path_img, self.read_path_info = self.make_path_to_read()
@@ -31,6 +33,34 @@ class IpImg2Ros:
     def pub_img(self):
         
         frames_file = open(self.read_path_info+"frames.txt", 'r')
+
+        with open(self.read_path_info+"info.yaml",'r') as file_yaml:
+            cam_info_config = yaml.safe_load(file_yaml)
+
+        caminfo = CameraInfo()
+        caminfo.header.seq = cam_info_config["header"]['seq']
+        caminfo.header.stamp.secs = cam_info_config["header"]['stamp']['secs']
+        caminfo.header.stamp.nsecs = cam_info_config["header"]['stamp']['nsecs']
+        caminfo.header.frame_id = cam_info_config["header"]['frame_id']
+        caminfo.height = cam_info_config["height"]
+        caminfo.width = cam_info_config["width"]
+        caminfo.distortion_model = cam_info_config["distortion_model"]
+        caminfo.D = cam_info_config["D"]
+        caminfo.K = cam_info_config["K"]
+        caminfo.R = cam_info_config["R"]
+        caminfo.P = cam_info_config["P"]
+        caminfo.binning_x = cam_info_config["binning_x"]
+        caminfo.binning_y = cam_info_config["binning_y"]
+        caminfo.roi.x_offset = cam_info_config["roi"]['x_offset']
+        caminfo.roi.y_offset = cam_info_config["roi"]['y_offset']
+        caminfo.roi.height = cam_info_config["roi"]['height']
+        caminfo.roi.width = cam_info_config["roi"]['width']
+        caminfo.roi.do_rectify = cam_info_config["roi"]['do_rectify']
+
+        
+        
+
+
         filenames = frames_file.readlines()
         for f in filenames:
             ### IMAGE
@@ -50,8 +80,14 @@ class IpImg2Ros:
             
             msg = self.cv_bridge.cv2_to_imgmsg(self.imgs[counter], encoding="16UC1")
             msg.header.stamp = self.timestamps[counter]
+            caminfo.header.seq = msg.header.seq
+            msg.header.frame_id = caminfo.header.frame_id
+            caminfo.header.stamp = self.timestamps[counter]
             
+            #print(caminfo)
+
             self.depth_publisher.publish(msg)
+            self.cam_info_publisher.publish(caminfo)
             self.rate.sleep()
             counter = counter + 1
             if counter >= len(self.imgs):
