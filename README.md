@@ -25,7 +25,7 @@ Gif presenting reconstruction of the depth image from PNG file (bottom) to ROS t
 
 Video below presents reconstruction of pointcloud data from republished depth image topic. White is original and pink is reconstructed one.
 
-[![Watch the video](https://i.imgur.com/vKb2F1B.png)](./media/pcl.mkv)
+![Alt Text](./media/pcl.gif)
 
 
 ## Bottomline
