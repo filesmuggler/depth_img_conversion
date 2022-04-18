@@ -1,4 +1,4 @@
-theme: jekyll-theme-architect
+theme: jekyll-theme-minimal
 logo: /assets/img/logo.jpg
 titles_from_headings:
   enabled:     true
