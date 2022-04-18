@@ -1,4 +1,5 @@
 theme: jekyll-theme-minimal
+logo: /assets/img/logo.png
 titles_from_headings:
   enabled:     true
   strip_title: true
