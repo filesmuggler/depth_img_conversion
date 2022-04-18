@@ -1,4 +1,4 @@
-# ip_conversion
+# depth_img_conversion
 
 ## Usage
 
@@ -34,4 +34,4 @@ It's not finished yet :)))
 Lots of work to be done 
 <br />
 <img src="https://media.giphy.com/media/E6jscXfv3AkWQ/giphy.gif" width="250" height="250"/> </img>
-<a href="https://giphy.com/gifs/cat-typing-E6jscXfv3AkWQ">via GIPHY</a></p>
+<a href="https://giphy.com/gifs/cat-typing-E6jscXfv3AkWQ"/>
